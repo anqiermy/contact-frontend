@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通讯录管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // 检查登录状态
+        window.onload = function() {
+            const user_id = localStorage.getItem('user_id');
+            if (!user_id) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('current-user').textContent = localStorage.getItem('username') || '用户';
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>📇 通讯录管理系统</h1>
+                <div class="user-info">
+                    <span>当前登录：<span id="current-user"></span></span>
+                    <button class="btn btn-secondary" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 搜索区域 -->
+        <div class="card search-card">
+            <h3>🔍 搜索联系人</h3>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="输入姓名或手机号...">
+                <button class="btn" onclick="searchContacts()">搜索</button>
+                <button class="btn btn-secondary" onclick="resetSearch()">重置</button>
+            </div>
+        </div>
+
+        <!-- 分组管理 -->
+        <div class="card group-card">
+            <h3>📁 分组管理</h3>
+            <div class="group-management">
+                <input type="text" id="add-group-name" placeholder="新分组名称...">
+                <button class="btn" onclick="addGroup()">添加分组</button>
+                <select id="group-filter" onchange="filterByGroup()" class="select-control">
+                    <option value="0">全部联系人</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 添加联系人 -->
+        <div class="card add-contact-card">
+            <h3>➕ 添加联系人</h3>
+            <div class="add-form">
+                <input type="text" id="add-name" placeholder="姓名" class="form-input">
+                <input type="tel" id="add-phone" placeholder="手机号" class="form-input">
+                <select id="add-group-id" class="select-control"></select>
+                <button class="btn" onclick="addContact()">添加</button>
+            </div>
+        </div>
+
+        <!-- 联系人列表 -->
+        <div class="card contact-list-card">
+            <h3>📋 联系人列表</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>手机号</th>
+                            <th>所属分组</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contact-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 修改弹窗 -->
+        <div class="modal" id="edit-modal">
+            <div class="modal-content">
+                <h3>✏️ 修改联系人</h3>
+                <input type="hidden" id="edit-phone-old">
+                <input type="text" id="edit-name" placeholder="姓名" class="form-input">
+                <input type="tel" id="edit-phone" placeholder="手机号" class="form-input">
+                <select id="edit-group-id" class="select-control"></select>
+                <div class="modal-buttons">
+                    <button class="btn" onclick="updateContact()">确认</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+</body>
+</html>

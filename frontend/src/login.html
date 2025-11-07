@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 通讯录</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="container login-container">
+        <div class="card">
+            <h2>📇 通讯录管理系统</h2>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('login')">登录</button>
+                <button class="tab-btn" onclick="showTab('register')">注册</button>
+            </div>
+
+            <!-- 登录表单 -->
+            <div id="login-tab" class="tab-content active">
+                <input type="text" id="login-username" placeholder="用户名" class="form-input">
+                <input type="password" id="login-password" placeholder="密码" class="form-input">
+                <button class="btn" onclick="login()">登录</button>
+            </div>
+
+            <!-- 注册表单 -->
+            <div id="register-tab" class="tab-content">
+                <input type="text" id="reg-username" placeholder="用户名" class="form-input">
+                <input type="password" id="reg-password" placeholder="密码" class="form-input">
+                <input type="email" id="reg-email" placeholder="邮箱（可选）" class="form-input">
+                <button class="btn" onclick="register()">注册</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换登录/注册标签
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // 注册功能
+        function register() {
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+
+            if (!username || !password) {
+                alert('用户名和密码不能为空');
+                return;
+            }
+
+            axios.post('http://127.0.0.1:5000/api/register', {
+                username, password, email
+            }).then(res => {
+                alert('注册成功，请登录');
+                showTab('login');
+            }).catch(err => {
+                alert('注册失败：' + (err.response?.data?.error || err.message));
+            });
+        }
+
+        // 登录功能
+        function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            axios.post('http://127.0.0.1:5000/api/login', {
+                username, password
+            }).then(res => {
+                localStorage.setItem('user_id', res.data.user_id);
+                localStorage.setItem('username', res.data.username);
+                window.location.href = 'index.html';
+            }).catch(err => {
+                alert('登录失败：' + (err.response?.data?.error || err.message));
+            });
+        }
+    </script>
+</body>
+</html>
